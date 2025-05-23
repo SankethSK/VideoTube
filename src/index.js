@@ -4,8 +4,8 @@ import express from "express"
 
 dotenv.config({ path: './env' })
 
-const port=process.env.PORT
 const app = express()
+let port=process.env.PORT
 
 ConnectionDB()
 .then(()=>{
