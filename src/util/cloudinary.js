@@ -1,4 +1,5 @@
 import {v2 as cloudinary} from "cloudinary";
+import { log } from "console";
 import fs from "fs";
 
 const cloudinary_cloud_name=process.env.CLOUDINARY_CLOUD_NAME
@@ -18,8 +19,11 @@ const uploadToCloud = async (localFilePath) =>{
             localFilePath,{
                 resource_type: "auto"
             })
-        console.log("File uploaded successfully: ",response)
+        fs.unlinkSync(localFilePath)
+        console.log("Cloudinary Response: ",response)
+        return response;
     } catch (error) {
+        console.log("Error while uploading: ",error)
         fs.unlinkSync(localFilePath)
         return null
     }

@@ -19,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) =>{
         }
         
         // check if the rec already exists: userName,email
-        const existedUser = User.findOne({
+        const existedUser = await User.findOne({
             $or: [{ userName }, { email }]
         })
 
@@ -28,20 +28,29 @@ const registerUser = asyncHandler(async (req, res) =>{
         }
 
         // check for images - mandatory
+        let avatarLocalPath
+        let coverImageLocalPath
 
-        const avatarLocalPath = req.files?.avatar[0]?.path
-        const coverImageLocalPath = req.files?.coverImage[0]?.path
-
-        if(!avatarLocalPath){
+        if(req.files && Array.isArray(req.files.avatar)){
+            avatarLocalPath = req.files.avatar[0].path
+        }else{
             throw new apiError(400, "Avatar file is required")
+        
+        }
+
+        if(req.files && Array.isArray(req.files.coverImage)){
+            coverImageLocalPath = req.files.coverImage[0].path
+        }else{
+            throw new apiError(400, "Avatar file is required")
+        
         }
 
         // upload them to cloudinary
         const avatar = await uploadToCloud(avatarLocalPath)
         const coverImage= await uploadToCloud(coverImageLocalPath)
 
-        if(!avatar){
-            throw new apiError(400, "Avatar file upload failed")
+        if(!avatar || !avatar.url){ // or use !avatar.secure_url
+            throw new apiError(500, "Avatar file upload failed")
         }
      
         // create user obj - entry for db
