@@ -23,7 +23,7 @@ const uploadToCloud = async (localFilePath) =>{
         console.log("Cloudinary Response: ",response)
         return response;
     } catch (error) {
-        console.log("Error while uploading: ",error)
+        console.log("Error while bnuploading: ",error)
         fs.unlinkSync(localFilePath)
         return null
     }
